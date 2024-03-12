@@ -1,5 +1,7 @@
 #抓包userapi.qiekj.com域名里的token
 #变量名pgsh=token，多账号用@
+#单号：export pgsh='a' 
+#多号；export pgsh='a@b@c' 
 #建议：执行时间: 0 6 * * * 
 import requests
 import json
