@@ -1,3 +1,9 @@
+#抓包userapi.qiekj.com域名里的token
+#变量名pgsh=token，多账号用@ 
+#例子：
+#单号：export pgsh='a'
+#多号；export pgsh='a@b@c'
+#对于报错情况，是胖乖那边限制了 多跑几次就好 暂时无法解决
 import requests
 import json
 import os
