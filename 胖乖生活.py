@@ -4,21 +4,13 @@ import os
 from urllib.parse import quote
 import time as timemodule
 from datetime import datetime, timedelta, time
-accounts = os.getenv('pgsh')
-accounts_list = os.environ.get('pgsh').split('@')
+accounts = os.getenv('rrr')
+accounts_list = os.environ.get('rrr').split('@')
 num_of_accounts = len(accounts_list)
-print(f"获取到 {num_of_accounts} 个账号,""仅供学习")
+print(f"获取到 {num_of_accounts} 个账号")
 for i, account in enumerate(accounts_list, start=1):
-    values = account.split('#')
-    if len(values) == 0:
-        print("获取token失败",account)
-        break
-    elif len(values) == 1:
-        token = values[0]
-        name = ""
-    else:
-        token, name = values[0], values[1]
-    print(f"\n=======执行账号{name}=======")
+    token = account
+    print(f"\n=======执行账号{i}=======")
     url = "https://userapi.qiekj.com/task/completed"
     headers = {
         "Host": "userapi.qiekj.com",
@@ -31,37 +23,73 @@ for i, account in enumerate(accounts_list, start=1):
         "Accept-Encoding": "gzip",
         "User-Agent": "okhttp/3.14.9",
     }
-    print(f"--💖APP视频💖--")
+    print(f"--🎃APP广告🎃--")
     for j in range(11):
         data = f"taskType=2&token={token}"
         response = requests.post(url, headers=headers, data=data).json()
         timemodule.sleep(5)
         if response['data'] == True:
-            print(f"已完成{j + 1}次")
+            print(f"第{j + 1}个任务成功")
         else:
             print("APP广告任务完成")
             break
-    print(f"--🍈ZFB视频🍈--")
+    print(f"--🍁支付宝广告🍁--")
     for t in range(11):
         data = f"taskType=9&token={token}"
         response = requests.post(url, headers=headers, data=data).json()
         timemodule.sleep(5)
         if response['data'] == True:
-            print(f"已完成{t + 1}次")
+            print(f"第{t + 1}个任务成功")
         else:
             print("支付宝广告任务完成")
             break
-    print(f"--🍥看广告赚积分🍥--")
+    print(f"--🍔招商支付任务🍔--")
+    for u in range(6):
+        data = f"taskType=6&token={token}"
+        response = requests.post(url, headers=headers, data=data).json()
+        timemodule.sleep(5)
+        if response['data'] == True:
+            print(f"第{u + 1}个任务成功")
+        else:
+            print("支付任务完成")
+            break
+    print(f"--🍥必做任务广告积分🍥--")
     for m in range(8):
         data = f"taskCode=18893134-715b-4307-af1c-b5737c70f58d&token={token}"
         response = requests.post(url, headers=headers, data=data).json()
         timemodule.sleep(3)
         if response['data'] == True:
-            print(f"已完成{m + 1}次")
+            print(f"第{m + 1}个任务成功")
         else:
             print("任务完成")
             break
-    print(f"--🥝浏览商品🥝--")
+    print(f"--🍥必做任务浏览商品1🍥--")
+    for e in range(1):
+        data = f"taskCode=8bb8b551-caa2-4ace-af8f-649c667094e7&token={token}"
+        response = requests.post(url, headers=headers, data=data).json()
+        if response['data'] == True:
+            print(f"第{e + 1}个任务成功")
+        else:
+            print("任务完成")
+    print(f"--🍥必做任务浏览商品2🍥--")
+    for k in range(1):
+        data = f"taskCode=5c627d10-4bc4-4c63-938a-387692601ecd&token={token}"
+        response = requests.post(url, headers=headers, data=data).json()
+        if response['data'] == True:
+            print(f"第{k + 1}个任务成功")
+        else:
+            print("任务完成")
+            timemodule.sleep(2)
+    print(f"--☃️日常任务☃️--")
+    for h in range(0, 21):
+        data1 = f"taskType={h}&token={token}"
+        response = requests.post(url, headers=headers, data=data1).json()
+        if response['data'] == True:
+            print(f"第{h + 1}个任务成功")
+        else:
+            print("日常任务完成")
+            timemodule.sleep(3)
+    print(f"--⚔️浏览商品⚔️--")
     url = "https://qemyapi.qiekj.com/api/search_item_list"
     headers = {
         "Host": "qemyapi.qiekj.com",
@@ -151,21 +179,3 @@ for i, account in enumerate(accounts_list, start=1):
     else:
         print("当前未到瓜分时间")
         timemodule.sleep(2)
-    print(f"--🌸查询积分🌸--")
-    url = "https://userapi.qiekj.com/signin/getTotalIntegral"
-    headers = {
-        "Host": "userapi.qiekj.com",
-        "Authorization": token,
-        "Version": "1.38.0",
-        "channel": "android_app",
-        "content-length": "60",
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        "Accept-Encoding": "gzip",
-        "User-Agent": "okhttp/3.14.9",
-    }
-    data8 = f"token={token}"
-    response = requests.post(url, headers=headers, data=data8)
-    data = response.json()['data']
-    if data is not None:
-        print(f'账户剩余积分：{data}')
-        
