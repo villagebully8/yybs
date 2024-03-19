@@ -67,42 +67,6 @@ for i, account in enumerate(accounts_list, start=1):
         else:
             print("任务完成")
             break
-    print(f"--🥝浏览商品🥝--")
-    url = "https://qemyapi.qiekj.com/api/search_item_list"
-    headers = {
-        "Host": "qemyapi.qiekj.com",
-        "Authorization": token,
-        "Version": "1.38.0",
-        "channel": "android_app",
-        "content-length": "60",
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        "Accept-Encoding": "gzip",
-        "User-Agent": "okhttp/3.14.9",
-    }
-    data2 = f"keyWord=%E9%98%B2%E6%99%92%E8%A1%A3&page=1&pageSize=20&token={token}"
-    response = requests.post(url, headers=headers, data=data2).json()
-    task_ids = [taskItem['item_id'] for taskItem in response['data']['data'][:6]]
-    for task_id in task_ids:
-        url = "https://userapi.qiekj.com/integralUmp/rewardIntegral"
-        headers = {
-            "Host": "userapi.qiekj.com",
-            "Authorization": token,
-            "Version": "1.38.0",
-            "channel": "android_app",
-            "content-length": "60",
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-            "Accept-Encoding": "gzip",
-            "User-Agent": "okhttp/3.14.9",
-        }
-        data3 = f"itemCode={task_id}&token={token}"
-        response = requests.post(url, headers=headers, data=data3).json()
-        if response['data'] is None:
-            print("浏览完成")
-            break
-        else:
-            score = response['data']['rewardIntegral']
-            print(f"获得积分：{score}")
-            timemodule.sleep(5)
     print(f"--👻报名积分打卡👻--")
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     encoded_current_time = quote(current_time)
