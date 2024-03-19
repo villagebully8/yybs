@@ -3,7 +3,7 @@
 #例子：
 #单号：export pgsh='a'
 #多号；export pgsh='a@b@c'
-#对于报错情况，是胖乖那边限制了 多跑几次就好 暂时无法解决
+#浏览商品是胖乖那边限制了 暂时删除了
 import requests
 import json
 import os
