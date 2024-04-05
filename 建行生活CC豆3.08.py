@@ -38,7 +38,7 @@ box_draw = 2
 '''
 basket_flag  1开启投篮球，0关闭
 '''
-basket_flag = 1
+basket_flag = 0
 '''
 竞猜专区，step，投入竞猜cc豆数量,guess_flag 0关闭，1开启
 '''
