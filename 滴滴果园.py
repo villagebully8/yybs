@@ -17,7 +17,7 @@ export ddgyToken='uid&token'
 
 
 cron: 28 0,8,12,18 * * *
-const $ = new Env('滴滴果园（大佬的我用不了）');
+const $ = new Env('滴滴果园');
 """
 import requests
 import re
