@@ -833,7 +833,7 @@ if __name__ == "__main__":
         exit(0)
 
     cookies = re.split(r'[@\n]', token)
-    print(f"移动硬盘共获取到{len(cookies)}个账号")
+    print(f"移动云盘共获取到{len(cookies)}个账号")
 
     for i, account_info in enumerate(cookies, start = 1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
