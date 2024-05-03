@@ -10,7 +10,7 @@
 # 更新日志:
 #   - [1.30]: [同一环境变量获取]
 # 注: 本脚本仅用于个人学习和交流，请勿用于非法用途。作者不承担由于滥用此脚本所引起的任何责任，请在下载后24小时内删除。
-# 作者: 洋洋不瘦
+# 作者: 木兮
 import os
 import random
 import re
@@ -826,14 +826,14 @@ class YP:
 
 
 if __name__ == "__main__":
-    env_name = 'ydypCK'
+    env_name = 'ydypCk'
     token = os.getenv(env_name)
     if not token:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
 
     cookies = re.split(r'[@\n]', token)
-    print(f"移动云盘共获取到{len(cookies)}个账号")
+    print(f"移动硬盘共获取到{len(cookies)}个账号")
 
     for i, account_info in enumerate(cookies, start = 1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
