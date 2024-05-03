@@ -34,7 +34,7 @@ class CCD:
         ccb_cookie_parts = ccb_cookie.split("#")
         self.deviceid, self.meb_id, self.phone, self.ccb_token = ccb_cookie_parts
         self.session = requests.Session()
-        self.activityCode = 'AP010202403060000001'
+        self.activityCode = 'AP20240329F0401T0430'
         self.ccbParam = None
         self.user_id = None
         self.user_city = None
