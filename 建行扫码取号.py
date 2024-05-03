@@ -36,7 +36,7 @@ class CCD:
         ccb_cookie_parts = ccb_cookie.split("#")
         self.deviceid, self.meb_id, self.phone, self.ccb_token = ccb_cookie_parts
         self.session = requests.Session()
-        self.activityCode = 'WANGDIANQHHD20240426'
+        self.activityCode = 'AP20240223F0301T0331'
         self.user_id = None
         self.token_headers = {
             'Host': 'event.ccbft.com',
@@ -111,7 +111,7 @@ class CCD:
                     param_url = 'https://yunbusiness.ccb.com/basic_service/txCtrl?txcode=A3341SB06'
                     param_payload = {
                         "regionCode": "110000",
-                        "PLATFORM_ID": "YS44000010000078",  # 需要更换
+                        "PLATFORM_ID": "WANGDIANQHHD20240426",  # 需要更换
                         "chnlType": "1",
                         "APPEND_PARAM": "",
                         "ENCRYPT_MSG": f"BGCOLOR=&userid={self.meb_id}&mobile={self.phone}&orderid=&PLATFLOWNO=1051000101693904952945620&cityid=610100&openid=&Usr_Name=&USERID={self.meb_id}&MOBILE={self.phone}&ORDERID=&CITYID=610100&OPENID=&userCityId=360400&lgt=116.25548583307314&ltt=29.36255293895674&USERCITYID=360400&LGT=116.25548583307314&LTT=29.36255293895674&GPS_TYPE=gcj02&MOBILE={self.phone}&CrdtType=1010&CrdtNo=231212"
