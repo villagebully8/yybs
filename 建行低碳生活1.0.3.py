@@ -1,34 +1,28 @@
 # 软件:建行生活
 # 活动信息: 低碳生活，碳能量换取立减金，外卖券
 # 格式 ccdck =  deviceid值#meb_id值#手机号#token值
-# 定时：0 0 20 * * *
+# 定时：0 57 6,20 * * *
 # 注: 此脚本仅限个人使用,不得传播
-# 作者: 洋洋不瘦
-# 更新 1.1
+# 更新日志:
+#   - [1.1]:
+#   - [4.23]: [增加自动兑换]
+# 说明: 抢兑一般为早上7点，8点,自己根据不同券定时。提前两三分钟会定时。早上不上传步数。
 import os
 import random
 import re
 import time
-from datetime import datetime
+import datetime
 import json
 from urllib.parse import quote
 
 import requests
 
-GLOBAL_DEBUG = False
-send_notify = []
-
-
-def log_info(text, notify=False):
-    if notify:
-        print(text)
-        send_notify.append(text)
-    else:
-        print(text)
+exchange_name = ""  # 兑换奖品名称  【地球日低碳特惠】外卖满10元减4元券(xx) 只需填写外卖满10元减4元券
 
 
 class CCD:
     def __init__(self, ccb_cookie):
+        self.GLOBAL_DEBUG = False
         ccb_cookie_parts = ccb_cookie.split("#")
         self.deviceid, self.meb_id, self.phone, self.ccb_token = ccb_cookie_parts
         self.user_id = None
@@ -47,7 +41,7 @@ class CCD:
 
     def send_request(self, url, headers=None, params=None, data=None, cookies=None, method='GET', debug=None):
         try:
-            debug = debug if debug is not None else GLOBAL_DEBUG
+            debug = debug if debug is not None else self.GLOBAL_DEBUG
 
             with requests.Session() as session:
                 session.headers.update(headers or {})
@@ -185,6 +179,7 @@ class CCD:
                 "page": "1"
             }
             remain_data = self.query("LCL146", data = remain_payload)
+            APnt_Bal = None
             if remain_data is not None:
                 # 成功
                 APnt_Bal = remain_data.get('APnt_Bal')  # 可用积分
@@ -192,66 +187,157 @@ class CCD:
             else:
                 # 失败
                 print('-查询失败')
-            # 可捡能量
-            rcrd_num_payload = {
-                "Cst_ID": self.Cst_ID,
-                "Cst_APAcc_SN": "",
-                "pageSize": "20",
-                "page": "1"
-            }
-            rcrd_num_data = self.query("LCL148", data = rcrd_num_payload)
-            if rcrd_num_data is not None:
-                Rvl_Rcrd_Num = int(rcrd_num_data.get('Rvl_Rcrd_Num'))
-                Avl_APnt = rcrd_num_data.get('Avl_APnt')
-                if Rvl_Rcrd_Num == 0:
-                    print(f'-当前可捡次数: {Rvl_Rcrd_Num}')
+
+            now = datetime.datetime.now()
+
+            if now.hour < 12:
+                self.award_list(APnt_Bal)
+            else:
+                # 可捡能量
+                rcrd_num_payload = {
+                    "Cst_ID": self.Cst_ID,
+                    "Cst_APAcc_SN": "",
+                    "pageSize": "20",
+                    "page": "1"
+                }
+                rcrd_num_data = self.query("LCL148", data = rcrd_num_payload)
+                if rcrd_num_data is not None:
+                    Rvl_Rcrd_Num = int(rcrd_num_data.get('Rvl_Rcrd_Num'))
+                    Avl_APnt = rcrd_num_data.get('Avl_APnt')
+                    if Rvl_Rcrd_Num == 0:
+                        print(f'-当前可捡次数: {Rvl_Rcrd_Num}')
+                    else:
+                        print(f'-当前可捡次数: {Rvl_Rcrd_Num},待领取能量值: {Avl_APnt}')
+                        LIST1 = rcrd_num_data.get('LIST1')  # 领取列表1
+                        for value in LIST1:
+                            time.sleep(2)
+                            Txn_Ordr_No = value.get('Txn_Ordr_No')
+                            Itm_Tp_ID = value.get('Itm_Tp_ID')
+                            Apnt_Hpn_Num = value.get('Apnt_Hpn_Num')
+                            receive_payload = {
+                                "Cst_ID": self.Cst_ID,
+                                "USER_ID": self.user_id,
+                                "Txn_Ordr_No": Txn_Ordr_No,
+                                "Itm_Tp_ID": Itm_Tp_ID,
+                                "Apnt_Hpn_Num": Apnt_Hpn_Num,
+                                "pageSize": "1",
+                                "page": "1",
+                                "sourceid": "1"
+                            }
+                            receive_data = self.query("LCL149", data = receive_payload)
+                            if receive_data is not None:
+                                APnt_Hpn_Num = receive_data.get('APnt_Hpn_Num')
+                                print(f'-领取成功，获得能量: {APnt_Hpn_Num}')
+                            else:
+                                print('-领取失败')
                 else:
-                    print(f'-当前可捡次数: {Rvl_Rcrd_Num},待领取能量值: {Avl_APnt}')
-                    LIST1 = rcrd_num_data.get('LIST1')  # 领取列表1
-                    for value in LIST1:
-                        time.sleep(2)
-                        Txn_Ordr_No = value.get('Txn_Ordr_No')
-                        Itm_Tp_ID = value.get('Itm_Tp_ID')
-                        Apnt_Hpn_Num = value.get('Apnt_Hpn_Num')
-                        receive_payload = {
-                            "Cst_ID": self.Cst_ID,
-                            "USER_ID": self.user_id,
-                            "Txn_Ordr_No": Txn_Ordr_No,
-                            "Itm_Tp_ID": Itm_Tp_ID,
-                            "Apnt_Hpn_Num": Apnt_Hpn_Num,
-                            "pageSize": "1",
-                            "page": "1",
-                            "sourceid": "1"
-                        }
-                        receive_data = self.query("LCL149", data = receive_payload)
-                        if receive_data is not None:
-                            APnt_Hpn_Num = receive_data.get('APnt_Hpn_Num')
-                            print(f'-领取成功，获得能量: {APnt_Hpn_Num}')
-                        else:
-                            print('-领取失败')
-            else:
-                print('-捡能量失败')
-            # 上传步数
-            print('-上传步数，假装走了很多步~')
-            # 获取当前时间
-            current_time = datetime.now()
+                    print('-捡能量失败')
+                # 上传步数
+                print('-上传步数，假装走了很多步~')
+                # 获取当前时间
+                current_time = datetime.datetime.now()
 
-            # 格式化成特定的字符串
-            formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
-            upload_payload = {
-                "txnAmt": random.randint(23800, 26000),
-                "openTime": formatted_time,
-                "phoneType": "0"
-            }
+                # 格式化成特定的字符串
+                formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+                upload_payload = {
+                    "txnAmt": random.randint(23800, 26000),
+                    "openTime": formatted_time,
+                    "phoneType": "0"
+                }
 
-            upload_data = self.query("LCL213", data = upload_payload)
-            if upload_data is not None:
-                Apnt_Hpn_Num = upload_data.get('Apnt_Hpn_Num')
-                print(f'-上传步数成功，获得能量: {Apnt_Hpn_Num}')
-            else:
-                print('-上传步数失败')
+                upload_data = self.query("LCL213", data = upload_payload)
+                if upload_data is not None:
+                    Apnt_Hpn_Num = upload_data.get('Apnt_Hpn_Num')
+                    print(f'-上传步数成功，获得能量: {Apnt_Hpn_Num}')
+                else:
+                    print('-上传步数失败')
         except Exception as e:
             print(f'错误信息: {e}')
+
+    # 奖品列表
+    def award_list(self, APnt_Bal):
+        try:
+            if exchange_name == "":
+                print('用户未开启兑换')
+                return
+            list_payload = {
+                "curPage": 1,
+                "chlno": "LCL005",
+                "regionCode": "110000"
+            }
+
+            list_res = self.query("LCL155", data = list_payload)
+            if list_res is not None:
+                lcld = list_res.get('lcld')
+                coupon_title, coupon_id, type, coupon_price = self.find_prize(lcld)
+                if coupon_title is None:
+                    print(f'未找到{exchange_name}，请检查是否有该类型的奖品。')
+                    return
+                elif int(APnt_Bal) < int(coupon_price):
+                    print('当前碳能量不足，无法兑换~~')
+                    return
+                else:
+                    # 开始兑换
+                    code_payload = {
+                        "Channel_Business": type,
+                        "Coupon_id": coupon_id
+                    }
+
+                    code_res = self.query("LCL206", data = code_payload)
+                    coupon_code = code_res.get("MSPS_ENTITY")[0].get("Coupon_ID")
+                    Remain_Num = code_res.get("MSPS_ENTITY")[0].get("Remain_Num")
+                    print(f'开始兑换: {coupon_title}, 库存数量: {Remain_Num}')
+
+                    exchange_payload = {
+                        "Channel_Business": type,
+                        "chlno": "LCL005",
+                        "Cst_ID": self.Cst_ID,
+                        "coupon_id": coupon_id,
+                        "coupon_code": coupon_code,
+                        "DcCp_Avy_Nm": coupon_title,
+                        "Adj_APnt_Num": coupon_price,
+                        "tel": self.phone,
+                        "coupon_an_name": "",
+                        "Discount_Id": "",
+                        "Opr_Blng_Inst_ECD": ""
+                    }
+                    # 获取当前时间
+                    now = datetime.datetime.now()
+
+                    if now.minute <= 15 or (30 <= now.minute < 45):
+                        time_to_next_run = 0
+                    elif now.minute < 30:
+                        time_to_next_run = (30 - now.minute) * 60 - now.second
+                    else:
+                        time_to_next_run = (60 - now.minute) * 60 - now.second
+
+                    print(f'将在:{time_to_next_run}秒后继续执行')
+
+                    time.sleep(time_to_next_run)
+
+                    for _ in range(3):
+                        exchange_res = self.query("LCL207", data = exchange_payload)
+                        if exchange_res is not None:
+                            print(exchange_res)
+                            break
+
+            else:
+                print("获取奖品列表失败")
+
+        except Exception as e:
+            print(f'兑换奖品出差:{e}')
+
+    def find_prize(self, exchange_lists):
+        for val in exchange_lists:
+            coupon_title = val.get("coupon_title")
+            coupon_id = val.get("coupon_id")
+            type = val.get("type")
+            coupon_price = val.get("coupon_price")  # 价格
+            if exchange_name in coupon_title:
+                print(coupon_title)
+
+                return coupon_title, coupon_id, type, coupon_price
+        return None, None, None, None
 
     # 查询
     def query(self, code, data=None, param=None):
