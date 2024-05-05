@@ -17,7 +17,7 @@ from urllib.parse import quote
 
 import requests
 
-exchange_name = ""  # 兑换奖品名称  【地球日低碳特惠】外卖满10元减4元券(xx) 只需填写外卖满10元减4元券
+exchange_name = "外卖满10元减4元券"  # 兑换奖品名称  【地球日低碳特惠】外卖满10元减4元券(xx) 只需填写外卖满10元减4元券
 
 
 class CCD:
