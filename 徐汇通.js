@@ -3,7 +3,7 @@
 功能:完成日常任务
 变量名:xhtck
 定时:一天一次即可
-cron: 55 8 * * *
+cron: 55 7 * * *
 const $ = new Env("徐汇通")
 */
 const _0x31d2a2 = _0x5b7e,
