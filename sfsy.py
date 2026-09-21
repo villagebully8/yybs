@@ -322,7 +322,7 @@ class SFHttpClient:
     def _generate_sign(self) -> Dict[str, str]:
         timestamp = str(int(round(time.time() * 1000)))
         data = f'token={TOKEN}&timestamp={timestamp}&sysCode={SYS_CODE}'
-        signature = hashlib.md5(data.encode()).hexdigest()
+        signature = hashlib.sha256(data.encode()).hexdigest()
         return {'syscode': SYS_CODE, 'timestamp': timestamp, 'signature': signature}
 
     def request(self, url: str, data: Optional[Dict] = None, extra_headers: Optional[Dict[str, str]] = None) -> Optional[Dict]:
@@ -920,11 +920,11 @@ class DragonBoatExecutor:
             self.http.session.get(entry_url, headers={'Accept': 'text/html,application/xhtml+xml'}, timeout=PROXY_TIMEOUT, allow_redirects=True)
             self.http.request(self.WECHAT_SIGNATURE, {"url": entry_url}, {'Referer': entry_url})
             now_ms = int(time.time() * 1000)
-            event_id = hashlib.md5(f"{self.user_id}-{now_ms}-{random.random()}".encode()).hexdigest()
+            event_id = hashlib.sha256(f"{self.user_id}-{now_ms}-{random.random()}".encode()).hexdigest()
             payload = {
                 "data": [{
                     "sdkInfo": {"sdkVersion": "1.0.0"},
-                    "userInfo": {"userId": self.user_id, "userTrackId": hashlib.md5(f"{self.user_id}-track".encode()).hexdigest()},
+                    "userInfo": {"userId": self.user_id, "userTrackId": hashlib.sha256(f"{self.user_id}-track".encode()).hexdigest()},
                     "timeInfo": {"time": now_ms, "clientTime": now_ms},
                     "appInfo": {"appId": "637b5859cab6b3d12cd20489"},
                     "pageInfo": {"href": entry_url, "baseUrl": self.BASE + "/origin/a/mimp-activity/dragonBoat2026", "title": ""},
