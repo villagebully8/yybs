@@ -4,7 +4,7 @@
 活动时间：2026-09-11 10:00 ~ 2026-10-08 19:00
 
 用法：
-  1. 环境变量 sfsyUrl 填账号（多账号换行分隔，支持 URL 或 Cookie 格式）
+  1. 环境变量 SfsyUrl 填账号（多账号换行分隔，支持 URL 或 Cookie 格式）
   2. 可选环境变量：
      SFBF          并发数（默认 1）
      ENABLE_PROXY  是否启用代理（默认 false）
@@ -1101,7 +1101,7 @@ def _extract_user_id(line: str) -> str:
 
 
 def main():
-    env_name = 'sfsyUrl'
+    env_name = 'SfsyUrl'
     env_value = os.getenv(env_name)
     if not env_value:
         print(f"❌ 未找到环境变量 {env_name}，请检查配置")
